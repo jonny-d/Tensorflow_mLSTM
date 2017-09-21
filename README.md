@@ -22,6 +22,7 @@ To specify the the hyperparameters and other settings for training the model, se
 The following model hyperparameters can be set using argparse:
 
 --[data_dir] - Path to the directory containing the training data. This directory must contain a text file as training data.
+
 --[saved_models_dir] - Name of the directory to save the model during training. A directory is created in the current working directory with this name. After training, the saved model is saved in a timestamped directory inside the [saved_models_dir] folder. 
 
 --[log_dir] - Name of the directory to save the logs during training (loss, learning rate, perplexity). The files saved here can be read by the Tensorboard tool to visualize this data. To use the Tensorboard tool, use the following command specifying the [logdir] argument for Tensorboard:
