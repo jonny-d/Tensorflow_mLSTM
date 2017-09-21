@@ -46,8 +46,11 @@ tensorboard --logdir=path/to/[log_dir]
 --[restore_path] - To restore a saved model from a previous session, specify the path to the saved model. This will be a folder from a previous run inside the [saved_models_dir]. The most recently saved model will be restored. The folder will contain 4 files:
 
 checkpoint file
+
 [your-model].data
+
 [your-model].index
+
 [your-model].meta
 
 --[summary_frequency] - This specifies how often you want to log data for tensorboard. The model will log data every N updates according to this value.
