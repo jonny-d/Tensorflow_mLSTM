@@ -1,5 +1,5 @@
 # Tensorflow_mLSTM
-Train a mLSTM language model in Tensorflow
+Train an mLSTM language model in Tensorflow
 
 The script train_mLSTM.py can be used to train a Multiplicative LSTM [Multiplicative LSTM for sequence modelling](https://arxiv.org/abs/1609.07959) language model in Tensorflow. The model is a byte-level mLSTM implemented using the techniques used in this paper —> [Generating Reviews and Discovering Sentiment](https://arxiv.org/abs/1704.01444).
 
