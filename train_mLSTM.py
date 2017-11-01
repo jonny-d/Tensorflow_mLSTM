@@ -279,8 +279,7 @@ with tf.Session(graph=graph) as session:
                     start = time.time()
                     print('Sampling...')
 
-                    feed = np.array(random.sample(xrange(vocabulary_size),1)) # random seed
-
+                    feed = np.array(random.sample(xrange(vocabulary_size),1), dtype='int32') # random seed
                     sentence = unicode('')
 
                     print('='*100)
@@ -289,7 +288,7 @@ with tf.Session(graph=graph) as session:
 
                         prediction = session.run(sample_prediction, feed_dict = {sample_input: feed})
                         feed = np.expand_dims(np.random.choice(xrange(vocabulary_size), p=prediction.ravel()),axis=0)
-                        sentence += unichr(int(feed))
+                        sentence += unichr(feed)
 
                     print(sentence)
                     end = time.time()
@@ -304,10 +303,8 @@ with tf.Session(graph=graph) as session:
                         os.makedirs(sample_dir)
                         sample_file = os.path.join(sample_dir,'samples')
 
-                    with io.open(sample_file,'a+', encoding='utf-8') as f:
-                        f.write('\n' + 'GLOBAL_STEP:' + str(gs) + '\n' + sentence)
-
-
+                    with io.open(sample_file, 'a+', encoding='utf-8') as f:
+                        f.write('\n' + 'GLOBAL_STEP: ' + str(gs) + '\n' + sentence)
 
     # save the fully trained model on the way out
     save_dir = os.path.join(args.saved_models_dir,timestamp)
