@@ -2,3 +2,5 @@
 
 
 *.pyc
+/tensorboard_logs
+/sample_logs
