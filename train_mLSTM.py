@@ -74,7 +74,7 @@ with graph.as_default():
     # mt = (Wmxxt) ⊙ (Wmhht−1) - equation 18
     Wmx = tf.Variable(tf.truncated_normal([embedding_size, rnn_size], -0.1, 0.1),name = 'Wmx')
     Wmh = tf.Variable(tf.truncated_normal([rnn_size, rnn_size], -0.1, 0.1), name = 'Wmh')
-    Wmb = tf.Variable(tf.zeros([1, rnn_size]),name = 'Wmb')
+    # Wmb = tf.Variable(tf.zeros([1, rnn_size]),name = 'Wmb')
 
     # hˆt = Whxxt + Whmmt
     Whx = tf.Variable(tf.truncated_normal([embedding_size, rnn_size], -0.1, 0.1),name = 'Whx')
@@ -161,7 +161,7 @@ with graph.as_default():
         # mt = (Wmxxt) ⊙ (Wmhht−1) - equation 18
         mt = tf.matmul(x,Wmx) * tf.matmul(h,Wmh)
         # hˆt = Whxxt + Whmmt
-        ht = tf.matmul(x,Whx) + tf.matmul(mt,Whm)
+        ht = tf.tanh(tf.matmul(x,Whx) + tf.matmul(mt,Whm) + Whb)
         # it = σ(Wixxt + Wimmt)
         it = tf.sigmoid(tf.matmul(x,Wix) + tf.matmul(mt,Wim)+ Wib)
         # ot = σ(Woxxt + Wommt)
