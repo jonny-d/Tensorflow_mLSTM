@@ -74,7 +74,6 @@ with graph.as_default():
     # mt = (Wmxxt) ⊙ (Wmhht−1) - equation 18
     Wmx = tf.Variable(tf.truncated_normal([embedding_size, rnn_size], -0.1, 0.1),name = 'Wmx')
     Wmh = tf.Variable(tf.truncated_normal([rnn_size, rnn_size], -0.1, 0.1), name = 'Wmh')
-    # Wmb = tf.Variable(tf.zeros([1, rnn_size]),name = 'Wmb')
 
     # hˆt = Whxxt + Whmmt
     Whx = tf.Variable(tf.truncated_normal([embedding_size, rnn_size], -0.1, 0.1),name = 'Whx')
