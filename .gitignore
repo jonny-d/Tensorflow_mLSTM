@@ -4,3 +4,5 @@
 *.pyc
 /tensorboard_logs
 /sample_logs
+/saved_models
+/model
