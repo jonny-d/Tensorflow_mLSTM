@@ -44,7 +44,8 @@ parser.add_argument('--num_chars', type=int, default=250,
                     help='Option to specify how many chars to sample from the model if --sampling_frequency is not zero ')
 parser.add_argument('--lr_decay', type=int, default=1,
                     help='Switch for learning rate decay. Integer argument of 1 for ON and 0 for OFF, learning rate is decayed to zero over the total number of updates')
-
+parser.add_argument('--prime', type=str, default=None,
+                    help='Prime the network with some bytes')
 
 args = parser.parse_args()
 
@@ -206,7 +207,6 @@ with graph.as_default():
     reset_sample_state = tf.group(saved_sample_output.assign(tf.zeros([1, rnn_size])), saved_sample_state.assign(tf.zeros([1, rnn_size])),name='reset_sample_state_op')
 
     sample_output, sample_state = mlstm_cell(sample_embedding, saved_sample_output, saved_sample_state)
-
     with tf.control_dependencies([saved_sample_output.assign(sample_output),saved_sample_state.assign(sample_state)]):
         sample_prediction = tf.nn.softmax(tf.nn.xw_plus_b(sample_output, w, b), name = 'sample_prediction')
 
@@ -279,16 +279,32 @@ with tf.Session(graph=graph) as session:
                     start = time.time()
                     print('Sampling...')
 
-                    feed = np.array(random.sample(xrange(vocabulary_size),1), dtype='int32') # random seed
-                    sentence = unicode('')
+                    sentence = bytearray()
 
-                    print('='*100)
+                    if args.prime is not None:
 
-                    for _ in xrange(args.num_chars): # can change number of characters to sample here
+                        # prime the network with a sequence of bytes
+                        prime = bytearray(args.prime)
+                        sentence += prime
+                        for i in prime:
+                            feed = np.array(i, ndmin=1)
+                            prediction = session.run(sample_prediction, feed_dict = {sample_input: feed})
 
+                    else:
+
+                        # prime with a random byte
+                        feed = np.array(random.sample(xrange(vocabulary_size),1), dtype='int32')
                         prediction = session.run(sample_prediction, feed_dict = {sample_input: feed})
+
+                    for _ in xrange(args.num_chars):
+
+                        # sequence is generated here
                         feed = np.expand_dims(np.random.choice(xrange(vocabulary_size), p=prediction.ravel()),axis=0)
-                        sentence += unichr(feed)
+                        sentence.append(int(feed))
+                        prediction = session.run(sample_prediction, feed_dict = {sample_input: feed})
+
+                    # decode the bytes to get unicode representation
+                    sentence = sentence.decode('utf-8', errors='replace')
 
                     print(sentence)
                     end = time.time()
@@ -296,7 +312,7 @@ with tf.Session(graph=graph) as session:
                     print('='*100)
                     print('Sampling time = ', end - start)
 
-                    # save samples
+                    #save samples
                     sample_dir = os.path.join('sample_logs',timestamp)
 
                     if not os.path.exists(sample_dir):
