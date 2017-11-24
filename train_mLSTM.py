@@ -134,11 +134,9 @@ with graph.as_default():
     w = tf.get_variable('Classifier_w', shape=(rnn_size, vocabulary_size), initializer=initializer)
     b = tf.get_variable('Classifier_b', shape=(vocabulary_size), initializer=initializer)
 
-    # tf.get_variable('gfm', shape=(rnn_size), initializer=initializer)
     # Variables for saving state across unrolled network.
     saved_output = tf.get_variable('saved_output', shape=(batch_size, rnn_size),initializer= tf.zeros_initializer(), trainable=False)
     saved_state = tf.get_variable('saved_state', shape=(batch_size, rnn_size),initializer= tf.zeros_initializer(), trainable=False)
-    # saved_state = tf.Variable(tf.zeros([batch_size, rnn_size]),name='saved_state', trainable=False)
 
     # placeholder for the inputs and the targets
     inputs = tf.placeholder(tf.int32, shape=[batch_size, seq_length],name='inputs')
@@ -183,7 +181,6 @@ with graph.as_default():
     for i in list_inputs:
         output, state = mlstm_cell(i, output, state)
         outputs.append(output)
-
 
     with tf.control_dependencies([saved_output.assign(output), saved_state.assign(state)]):
         # Classifier.
@@ -255,7 +252,8 @@ with tf.Session(graph=graph) as session:
 
             if args.lr_decay == 1:
 
-                lr = init_lr-(((gs)*init_lr)/loader.num_batches) # linearly decay the learning rate to zero over the number of updates
+                # linearly decay the learning rate to zero over the number of updates
+                lr = init_lr-(((gs)*init_lr)/ (args.num_epochs * loader.num_batches))
 
                 _,l,perp,summary=session.run([optimizer, loss, perplexity, summaries], feed_dict={inputs:x, targets:y,learning_rate:lr})
 
@@ -265,8 +263,8 @@ with tf.Session(graph=graph) as session:
 
             end = time.time()
 
-            print("Global step: {}, progress: ({}/{}), train_loss = {:.3f}, train_perplexity = {:.3f} time/batch = {:.3f}"
-                .format(gs,epoch * loader.num_batches + batch,args.num_epochs * loader.num_batches,l, perp, end - start))
+            print("Global step: {}, progress: ({}/{}), train_loss = {:.3f}, train_perplexity = {:.3f}, time/batch = {:.3f}, learning_rate = {}"
+                .format(gs,epoch * loader.num_batches + batch,args.num_epochs * loader.num_batches,l, perp, end - start, lr))
 
             # write the summaries to the log_dir for tensorboard
             if args.summary_frequency != 0:
