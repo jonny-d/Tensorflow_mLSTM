@@ -63,52 +63,55 @@ vocabulary_size = 256 # byte
 
 graph = tf.Graph()
 
+# initialiser used for all parameters
+initializer = tf.glorot_normal_initializer()
+
 with graph.as_default():
 
-    # weight matrix for character embedding
-    W_embedding = tf.Variable(tf.truncated_normal([vocabulary_size, embedding_size], -0.1, 0.1),name = 'W_embedding')
+    # define all of the model variables
+    W_embedding = tf.get_variable('W_embedding', shape=(vocabulary_size, embedding_size), initializer=initializer)
 
     # mt = (Wmxxt) ⊙ (Wmhht−1) - equation 18
-    Wmx = tf.Variable(tf.truncated_normal([embedding_size, rnn_size], -0.1, 0.1),name = 'Wmx')
-    Wmh = tf.Variable(tf.truncated_normal([rnn_size, rnn_size], -0.1, 0.1), name = 'Wmh')
+    Wmx = tf.get_variable('Wmx', shape=(embedding_size, rnn_size), initializer=initializer)
+    Wmh = tf.get_variable('Wmh', shape=(rnn_size, rnn_size), initializer=initializer )
 
     # hˆt = Whxxt + Whmmt
-    Whx = tf.Variable(tf.truncated_normal([embedding_size, rnn_size], -0.1, 0.1),name = 'Whx')
-    Whm = tf.Variable(tf.truncated_normal([rnn_size, rnn_size], -0.1, 0.1),name = 'Whm')
-    Whb = tf.Variable(tf.zeros([1, rnn_size]),name = 'Whb')
+    Whx = tf.get_variable('Whx', shape=(embedding_size, rnn_size), initializer=initializer)
+    Whm = tf.get_variable('Whm', shape=(rnn_size,rnn_size), initializer=initializer)
+    Whb = tf.get_variable('Whb', shape=(1, rnn_size), initializer=initializer)
 
     # it = σ(Wixxt + Wimmt)
-    Wix = tf.Variable(tf.truncated_normal([embedding_size, rnn_size], -0.1, 0.1),name = 'Wix')
-    Wim = tf.Variable(tf.truncated_normal([rnn_size, rnn_size], -0.1, 0.1),name = 'Wim')
-    Wib = tf.Variable(tf.zeros([1, rnn_size]),name = 'Wib')
+    Wix = tf.get_variable('Wix', shape=(embedding_size, rnn_size), initializer=initializer)
+    Wim = tf.get_variable('Wim', shape=(rnn_size, rnn_size), initializer=initializer)
+    Wib = tf.get_variable('Wib', shape=(1, rnn_size), initializer=initializer)
 
     # ot = σ(Woxxt + Wommt)
-    Wox = tf.Variable(tf.truncated_normal([embedding_size, rnn_size], -0.1, 0.1),name = 'Wox')
-    Wom = tf.Variable(tf.truncated_normal([rnn_size, rnn_size], -0.1, 0.1),name = 'Wom')
-    Wob = tf.Variable(tf.zeros([1, rnn_size]),name = 'Wob')
+    Wox = tf.get_variable('Wox', shape=(embedding_size, rnn_size), initializer=initializer)
+    Wom = tf.get_variable('Wom', shape=(rnn_size, rnn_size), initializer=initializer)
+    Wob = tf.get_variable('Wob', shape=(1, rnn_size), initializer=initializer)
 
     # ft =σ(Wfxxt +Wfmmt)
-    Wfx = tf.Variable(tf.truncated_normal([embedding_size, rnn_size], -0.1, 0.1),name = 'Wfx')# Wox
-    Wfm = tf.Variable(tf.truncated_normal([rnn_size, rnn_size], -0.1, 0.1),name = 'Wfm')# Woh
-    Wfb = tf.Variable(tf.zeros([1, rnn_size]),name = 'Wfb')
+    Wfx = tf.get_variable('Wfx', shape=(embedding_size, rnn_size),initializer=initializer)
+    Wfm = tf.get_variable('Wfm', shape=(rnn_size, rnn_size), initializer=initializer)
+    Wfb = tf.get_variable('Wfb', shape=(1, rnn_size), initializer=initializer)
 
     # define the g parameters for weight normalization if wn switch is on
     if args.wn == 1:
 
-        gmx = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='gmx')
-        gmh = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='gmh')
+        gmx = tf.get_variable('gmx', shape=(rnn_size), initializer=initializer)
+        gmh = tf.get_variable('gmh', shape=(rnn_size), initializer=initializer)
 
-        ghx = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='ghx')
-        ghm = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='ghm')
+        ghx = tf.get_variable('ghx', shape=(rnn_size), initializer=initializer)
+        ghm = tf.get_variable('ghm', shape=(rnn_size), initializer=initializer)
 
-        gix = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='gix')
-        gim = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='gim')
+        gix = tf.get_variable('gix', shape=(rnn_size), initializer=initializer)
+        gim = tf.get_variable('gim', shape=(rnn_size), initializer=initializer)
 
-        gox = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='gox')
-        gom = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='gom')
+        gox = tf.get_variable('gox', shape=(rnn_size), initializer=initializer)
+        gom = tf.get_variable('gom', shape=(rnn_size), initializer=initializer)
 
-        gfx = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='gfx')
-        gfm = tf.Variable(tf.truncated_normal([rnn_size], -0.1, 0.1),name='gfm')
+        gfx = tf.get_variable('gfx', shape=(rnn_size), initializer=initializer)
+        gfm = tf.get_variable('gfm', shape=(rnn_size), initializer=initializer)
 
 
         # normalized weights
@@ -127,14 +130,15 @@ with graph.as_default():
         Wfx = tf.nn.l2_normalize(Wfx,dim=0)*gfx
         Wfm = tf.nn.l2_normalize(Wfm,dim=0)*gfm
 
+    # classifier weights and biases.
+    w = tf.get_variable('Classifier_w', shape=(rnn_size, vocabulary_size), initializer=initializer)
+    b = tf.get_variable('Classifier_b', shape=(vocabulary_size), initializer=initializer)
 
+    # tf.get_variable('gfm', shape=(rnn_size), initializer=initializer)
     # Variables for saving state across unrolled network.
-    saved_output = tf.Variable(tf.zeros([batch_size, rnn_size]),name='saved_output', trainable=False)
-    saved_state = tf.Variable(tf.zeros([batch_size, rnn_size]),name='saved_state', trainable=False)
-
-    # Classifier weights and biases.
-    w = tf.Variable(tf.truncated_normal([rnn_size, vocabulary_size], -0.1, 0.1),name='Classifier_w')
-    b = tf.Variable(tf.zeros([vocabulary_size]),name='Classifier_b')
+    saved_output = tf.get_variable('saved_output', shape=(batch_size, rnn_size),initializer= tf.zeros_initializer(), trainable=False)
+    saved_state = tf.get_variable('saved_state', shape=(batch_size, rnn_size),initializer= tf.zeros_initializer(), trainable=False)
+    # saved_state = tf.Variable(tf.zeros([batch_size, rnn_size]),name='saved_state', trainable=False)
 
     # placeholder for the inputs and the targets
     inputs = tf.placeholder(tf.int32, shape=[batch_size, seq_length],name='inputs')
