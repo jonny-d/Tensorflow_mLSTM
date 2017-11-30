@@ -20,8 +20,6 @@ meta_path = args.meta_path
 model_path =args.model_dir
 output_file = args.output
 
-
-
 start = time.time()
 
 #restore a saved model then extract and save the weights in the appropriate format for encoder.py
