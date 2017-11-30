@@ -141,4 +141,4 @@ with tf.Session() as session:
 
 end = time.time()
 
-print('Weights extraction time: ' end - start )
+print('Weights extraction time: ', end - start )
