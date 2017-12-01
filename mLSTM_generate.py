@@ -198,4 +198,4 @@ with tf.Session(graph=graph) as session:
             sample_file = os.path.join(sample_dir,'samples')
 
         with io.open(sample_file, 'a+', encoding='utf-8') as f:
-            f.write('\n' + 'GLOBAL_STEP: ' + str(gs) + '\n' + sentence)
+            f.write(sentence)
