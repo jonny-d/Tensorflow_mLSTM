@@ -7,3 +7,6 @@
 /saved_models
 /model
 /model0
+/gen_weights
+encoder.py
+utils.py
